@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialPulse AI | Digital Wellness Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --ai-accent: #764ba2;
+        }
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .header-bg { background: var(--primary-gradient); padding: 60px 0 80px 0; color: white; border-radius: 0 0 40px 40px; }
+        .main-card { border: none; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: white; margin-top: -50px; }
+        .score-box { font-size: 4rem; font-weight: 800; color: var(--ai-accent); line-height: 1; }
+        .ai-recommendation-card { display: none; background: #fdfbff; border-left: 5px solid var(--ai-accent); border-radius: 15px; }
+        .loader { display: none; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--ai-accent); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .step-item { background: #fff; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="header-bg text-center">
+    <div class="container">
+        <h1 class="fw-bold"><i class="bi bi-shield-check me-2"></i>SocialPulse AI</h1>
+        <p>Advanced Machine Learning Addiction Analysis</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="main-card p-4 p-md-5">
+                <div id="form-section">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-input-cursor-text me-2"></i>Step 1: Behavioral Data</h4>
+                    <form id="predictionForm" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Age</label>
+                            <input type="number" name="Age" class="form-control" placeholder="15-30" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Usage (Hours/Day)</label>
+                            <input type="number" step="0.1" name="Avg_Daily_Usage_Hours" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Platform</label>
+                            <select name="Most_Used_Platform" id="platformSelect" class="form-select">
+                                <option value="Instagram">Instagram</option>
+                                <option value="TikTok">TikTok</option>
+                                <option value="YouTube">YouTube</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Sleep (Hours)</label>
+                            <input type="number" step="0.1" name="Sleep_Hours_Per_Night" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Conflicts (0-5)</label>
+                            <input type="number" name="Conflicts_Over_Social_Media" class="form-control" min="0" max="5" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Academic Level</label>
+                            <select name="Academic_Level" class="form-select">
+                                <option value="Undergraduate">Undergraduate</option>
+                                <option value="Graduate">Graduate</option>
+                                <option value="High School">High School</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Relationship Status</label>
+                            <select name="Relationship_Status" class="form-select">
+                                <option value="Single">Single</option>
+                                <option value="In Relationship">In Relationship</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 text-center pt-4">
+                            <input type="radio" name="Gender" value="Male" checked> Male &nbsp;
+                            <input type="radio" name="Gender" value="Female"> Female
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Academic Impact?</label>
+                            <select name="Affects_Academic_Performance" id="academicSelect" class="form-select">
+                                <option value="No">No major impact</option>
+                                <option value="Yes">Yes, distracting</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-dark w-100 p-3 fw-bold">PREDICT ADDICTION SCORE</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="result-section" style="display:none;" class="mt-4 border-top pt-4 text-center">
+                    <p class="text-muted mb-0">Your Personal Score</p>
+                    <div id="scoreDisplay" class="score-box">--</div>
+                    <h3 id="riskLabel" class="fw-bold">--</h3>
+                    <p id="riskAdvice" class="text-secondary"></p>
+                    
+                    <button id="recommendBtn" class="btn btn-primary btn-lg mt-3 shadow">
+                        <span id="btnLoader" class="loader" style="display:none;"></span>
+                        <i class="bi bi-stars"></i> Get AI Wellness Plan
+                    </button>
+                </div>
+
+                <div id="ai-section" class="ai-recommendation-card p-4 mt-5">
+                    <h5 class="fw-bold text-primary"><i class="bi bi-robot"></i> Personalized Recovery Roadmap</h5>
+                    <div id="ai-reason" class="text-muted small mb-3 italic"></div>
+                    <div id="ai-plan" class="row g-2">
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let globalScore = 0;
+
+    // --- HANDLE PREDICTION ---
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            globalScore = result.prediction_score;
+            document.getElementById('scoreDisplay').innerText = globalScore;
+            document.getElementById('riskLabel').innerText = result.risk_level;
+            document.getElementById('riskLabel').className = 'fw-bold ' + result.color_class;
+            document.getElementById('riskAdvice').innerText = result.summary;
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // --- HANDLE AI RECOMMENDATION ---
+    document.getElementById('recommendBtn').addEventListener('click', async () => {
+        const platform = document.getElementById('platformSelect').value;
+        const academics = document.getElementById('academicSelect').value;
+        const btnLoader = document.getElementById('btnLoader');
+        
+        btnLoader.style.display = 'inline-block';
+        
+        const response = await fetch('/recommend', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                score: globalScore,
+                platform: platform,
+                academics: academics
+            })
+        });
+
+        const result = await response.json();
+        btnLoader.style.display = 'none';
+
+        if (result.status === 'success') {
+            const data = result.recommendation;
+            document.getElementById('ai-reason').innerText = `Analysis for ${data.platform_type}: ${data.analysis_reason}`;
+            
+            const planDiv = document.getElementById('ai-plan');
+            planDiv.innerHTML = ''; // Clear old data
+            
+            data.execution_plan.forEach(step => {
+                const col = document.createElement('div');
+                col.className = 'col-12';
+                col.innerHTML = `<div class="step-item"><i class="bi bi-check2-circle text-primary me-2"></i>${step}</div>`;
+                planDiv.appendChild(col);
+            });
+
+            document.getElementById('ai-section').style.display = 'block';
+            document.getElementById('ai-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+</script>
+
+</body>
+</html>
